@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SmartSort BinBot — Trash that pays you back</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root {
+    --green: #22c55e;
+    --green-dark: #166534;
+    --green-light: #dcfce7;
+    --green-mid: #86efac;
+    --accent: #6b7280;
+    --accent-light: #e5e7eb;
+    --purple: #4b5563;
+    --purple-light: #e5e7eb;
+    --amber: #4b5563;
+    --amber-light: #e5e7eb;
+    --coral: #6b7280;
+    --coral-light: #f3f4f6;
+    --text: #111827;
+    --text-muted: #9ca3af;
+    --bg: #111827;
+    --white: #1f2937;
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: #e5e7eb; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(17,24,39,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid #374151;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5vw; height: 64px;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: #bbf7d0; }
+  .logo-icon { width: 36px; height: 36px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .logo-icon svg { width: 22px; height: 22px; }
+  nav ul { list-style: none; display: flex; gap: 2rem; }
+  nav ul a { text-decoration: none; color: #9ca3af; font-size: 0.9rem; font-weight: 500; transition: color .2s; }
+  nav ul a:hover { color: var(--green); }
+  .nav-cta { background: #ffffff; color: #111827 !important; padding: 8px 18px; border-radius: 20px; font-size: 0.85rem !important; }
+  .nav-cta:hover { background: #e5e7eb !important; color: #111827 !important; }
+  .lang-switch { display: inline-flex; background: #374151; border-radius: 20px; padding: 3px; margin-left: 10px; }
+  .lang-btn { border: 0; background: transparent; color: #d1d5db; font-size: 0.78rem; font-weight: 700; padding: 6px 10px; border-radius: 16px; cursor: pointer; }
+  .lang-btn.active { background: var(--green); color: #111827; }
+
+  /* HERO */
+  .hero {
+    min-height: 92vh; display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg, #111827 0%, #1f2937 35%, #166534 100%);
+    position: relative; overflow: hidden; text-align: center; padding: 6rem 5vw 4rem;
+  }
+  .hero-bg-blobs { position: absolute; inset: 0; pointer-events: none; }
+  .blob { position: absolute; border-radius: 50%; opacity: 0.18; animation: blobFloat 8s ease-in-out infinite; }
+  .blob1 { width: 500px; height: 500px; background: #86efac; top: -100px; right: -100px; }
+  .blob2 { width: 350px; height: 350px; background: #9ca3af; bottom: -80px; left: -80px; animation-delay: -3s; }
+  @keyframes blobFloat { 0%,100% { transform: translateY(0) translateX(0) scale(1); } 50% { transform: translateY(-16px) translateX(8px) scale(1.04); } }
+  .hero-content { position: relative; z-index: 1; max-width: 780px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(31,41,55,0.5); border: 1px solid rgba(107,114,128,0.55); color: #bbf7d0; font-size: 0.8rem; padding: 6px 16px; border-radius: 20px; margin-bottom: 2rem; font-weight: 500; }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 900; color: #e5e7eb; line-height: 1.1; margin-bottom: 1.5rem; }
+  .hero h1 { text-shadow: 0 8px 28px rgba(0,0,0,0.28); }
+  .hero h1 span { color: #5DCAA5; }
+  .hero p { font-size: 1.2rem; color: rgba(229,231,235,0.8); max-width: 540px; margin: 0 auto 2.5rem; line-height: 1.7; }
+  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary { background: #ffffff; color: #111827; font-weight: 700; padding: 16px 32px; border-radius: 30px; text-decoration: none; font-size: 1rem; border: none; cursor: pointer; transition: transform .2s, box-shadow .2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(29,158,117,0.4); }
+  .btn-primary { box-shadow: 0 6px 18px rgba(93,202,165,0.32); }
+  .btn-secondary { background: #ffffff; color: #111827; font-weight: 600; padding: 16px 32px; border-radius: 30px; text-decoration: none; font-size: 1rem; border: 1px solid #d1d5db; cursor: pointer; transition: background .2s; display: inline-flex; align-items: center; gap: 8px; }
+  .btn-secondary:hover { background: #e5e7eb; }
+  .hero-badge { animation: glowPulse 2.6s ease-in-out infinite; }
+  @keyframes glowPulse { 0%,100% { box-shadow: 0 0 0 rgba(159,225,203,0.0); } 50% { box-shadow: 0 0 24px rgba(159,225,203,0.25); } }
+  .hero-stats { display: flex; gap: 3rem; justify-content: center; margin-top: 4rem; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 900; color: #e5e7eb; }
+  .hero-stat span { font-size: 0.85rem; color: rgba(209,213,219,0.8); }
+
+  /* CAN VISUAL */
+  .can-float { display: flex; justify-content: center; margin: -3rem auto 0; position: relative; z-index: 2; }
+  .can-wrap { width: 180px; height: 260px; position: relative; }
+  .can-body { width: 140px; height: 220px; background: linear-gradient(160deg, #1D9E75, #085041); border-radius: 20px 20px 28px 28px; margin: 0 auto; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+  .can-lid { width: 150px; height: 20px; background: #0a2e1f; border-radius: 10px 10px 0 0; margin: 0 auto; }
+  .can-screen { width: 80px; height: 50px; background: #0a2e1f; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+  .can-led { width: 8px; height: 8px; border-radius: 50%; animation: blink 1.5s infinite; }
+  .can-led.g { background: #5DCAA5; }
+  .can-led.r { background: #FA8072; animation-delay: .5s; }
+  .can-led.b { background: #87CEEB; animation-delay: 1s; }
+  .can-leds { display: flex; gap: 6px; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .scan-line { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: rgba(93,202,165,0.7); animation: scan 2s infinite linear; border-radius: 2px; }
+  @keyframes scan { 0%{top:0%} 100%{top:90%} }
+
+  /* SECTIONS */
+  section { padding: 6rem 5vw; }
+  .section-label { display: inline-block; font-size: 0.75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #bbf7d0; background: rgba(34,197,94,.18); border: 1px solid rgba(34,197,94,.35); padding: 5px 14px; border-radius: 20px; margin-bottom: 1rem; }
+  .section-title { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.2; margin-bottom: 1rem; }
+  .section-sub { font-size: 1.05rem; color: var(--text-muted); max-width: 540px; line-height: 1.7; }
+
+  /* HOW IT WORKS */
+  .how { background: #1f2937; }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 4rem; }
+  .step { text-align: center; background: #111827; border: 1px solid #374151; border-radius: var(--radius); padding: 1.2rem; transition: transform .2s, border-color .2s; }
+  .step:hover { transform: translateY(-4px); border-color: #4b5563; }
+  .step-num { width: 56px; height: 56px; border-radius: 50%; background: var(--green-light); color: var(--green-dark); font-size: 1.4rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; border: 2px solid var(--green-mid); }
+  .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+  .step p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+  .step-icon { font-size: 2rem; margin-bottom: .8rem; }
+
+  /* REWARDS */
+  .rewards { background: #111827; }
+  .rewards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .reward-card { background: #1f2937; border-radius: var(--radius); padding: 1.8rem; border: 1.5px solid #374151; transition: transform .2s, box-shadow .2s; }
+  .reward-card:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 12px 40px rgba(29,158,117,0.16); }
+  .reward-emoji { font-size: 2.5rem; margin-bottom: 1rem; }
+  .reward-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: .5rem; }
+  .reward-card p { font-size: 0.9rem; color: #9ca3af; line-height: 1.6; margin-bottom: 1rem; }
+  .reward-tag { display: inline-block; font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; }
+  .tag-coffee { background: var(--amber-light); color: var(--amber); }
+  .tag-food { background: var(--green-light); color: var(--green-dark); }
+  .tag-fashion { background: var(--purple-light); color: var(--purple); }
+  .partners { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: .8rem; }
+  .partner-pill { font-size: 0.75rem; background: #111827; border: 1px solid #4b5563; border-radius: 20px; padding: 3px 10px; color: #9ca3af; }
+
+  /* POINTS COUNTER */
+  .points-section { background: linear-gradient(135deg, #14532d, #166534); color: #e5e7eb; text-align: center; }
+  .points-section .section-title { color: #e5e7eb; }
+  .points-section .section-sub { color: rgba(229,231,235,0.82); max-width: 600px; margin: 0 auto 3rem; }
+  .points-demo { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+  .point-chip { background: rgba(31,41,55,0.5); border: 1px solid rgba(107,114,128,0.7); border-radius: var(--radius); padding: 1.5rem 2rem; min-width: 160px; }
+  .point-chip .pts { font-size: 2.5rem; font-weight: 900; color: #9FE1CB; }
+  .point-chip .label { font-size: 0.85rem; color: rgba(229,231,235,0.82); margin-top: .3rem; }
+
+  /* MAP */
+  .map-section { background: #1f2937; }
+  .map-section .section-sub { margin-bottom: 2.5rem; }
+  #map { width: 100%; height: 460px; border-radius: var(--radius); overflow: hidden; border: 2px solid #374151; }
+  .map-legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.2rem; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--text-muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; animation: dotPulse 1.8s ease-in-out infinite; }
+  @keyframes dotPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: .7; } }
+
+  /* DOWNLOAD */
+  .download { background: #111827; text-align: center; }
+  .download .section-title { margin-bottom: 1rem; }
+  .download .section-sub { margin: 0 auto 2.5rem; }
+  .app-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .app-btn { display: flex; align-items: center; gap: 12px; background: #111827; color: #e5e7eb; padding: 14px 24px; border-radius: 14px; text-decoration: none; cursor: not-allowed; opacity: 0.96; border: 1px solid #4b5563; font-family: inherit; transition: transform .15s, border-color .15s; }
+  .app-btn:hover { transform: scale(0.98); border-color: #86efac; }
+  .app-btn-text { text-align: left; }
+  .app-btn-text small { display: block; font-size: 0.7rem; color: #aaa; }
+  .app-btn-text strong { display: block; font-size: 1rem; font-weight: 700; }
+  .coming-badge { display: inline-block; background: var(--amber-light); color: var(--amber); font-size: 0.75rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; margin-top: 1rem; }
+  .coming-badge { animation: glowTag 2.4s ease-in-out infinite; }
+  @keyframes glowTag { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
+
+  /* FOOTER */
+  footer { background: #111827; color: rgba(229,231,235,0.78); text-align: center; padding: 2rem 5vw; font-size: 0.85rem; }
+  footer span { color: #86efac; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid #86efac;
+    outline-offset: 3px;
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .reveal.in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    nav { height: auto; min-height: 64px; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; gap: .7rem; }
+    nav ul { display: flex; gap: .8rem; width: 100%; overflow-x: auto; padding-bottom: 2px; }
+    nav ul a { font-size: 0.82rem; white-space: nowrap; }
+    section { padding: 4.4rem 5vw; }
+    .hero-stats { gap: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+      </svg>
+    </div>
+    SmartSort BinBot
+  </div>
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#rewards">Rewards</a></li>
+    <li><a href="#map">Find a bin</a></li>
+    <li><a href="#download" class="nav-cta">Get the app</a></li>
+  </ul>
+  <div class="lang-switch" aria-label="Language selector">
+    <button type="button" class="lang-btn active" id="lang-en">EN</button>
+    <button type="button" class="lang-btn" id="lang-mk">MK</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-blobs">
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      ♻ AI-Powered Smart Recycling · Strumica
+    </div>
+    <h1>Trash smarter.<br><span>Earn rewards.</span><br>Vibe harder.</h1>
+    <p>The world's first AI trash can that pays you back in coffee, groceries & fits. Drop it. Scan it. Stack points.</p>
+    <div class="hero-btns">
+      <a href="#download" class="btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download App
+      </a>
+      <a href="#how" class="btn-secondary">
+        See how it works ↓
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><strong>12</strong><span>Bins in Strumica</span></div>
+      <div class="hero-stat"><strong>3x</strong><span>More recycling</span></div>
+      <div class="hero-stat"><strong>500+</strong><span>Points earned daily</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">How it works</div>
+  <h2 class="section-title">Throw. Scan. Slay.</h2>
+  <p class="section-sub">BinBot makes recycling stupid easy — and actually rewarding. No lectures, just points.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📱</div>
+      <div class="step-num">1</div>
+      <h3>Open the app</h3>
+      <p>Download SmartSort BinBot and create your account in under 60 seconds.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🗑️</div>
+      <div class="step-num">2</div>
+      <h3>Find a BinBot</h3>
+      <p>Locate the nearest AI-powered smart bin on the map. There's always one close.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🤖</div>
+      <div class="step-num">3</div>
+      <h3>Toss your trash</h3>
+      <p>Our AI scans, sorts & verifies your waste in real-time. No guessing, no wrong bins.</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">✨</div>
+      <div class="step-num">4</div>
+      <h3>Stack points</h3>
+      <p>Earn BinCoins instantly. Redeem them at your fav spots across Strumica.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REWARDS -->
+<section class="rewards" id="rewards">
+  <div class="section-label">Rewards</div>
+  <h2 class="section-title">Your trash = your treasure</h2>
+  <p class="section-sub">Redeem BinCoins at the places you actually go to. No boomer coupons — real rewards at real spots.</p>
+  <div class="rewards-grid">
+    <div class="reward-card">
+      <div class="reward-emoji">☕</div>
+      <h3>Coffee Shops</h3>
+      <p>Free espressos, cappuccinos & seasonal drinks. Because your morning deserves a glow-up.</p>
+      <span class="reward-tag tag-coffee">100 points = Free coffee</span>
+      <div class="partners">
+        <span class="partner-pill">ETC</span>
+        <span class="partner-pill">Forum</span>
+        <span class="partner-pill">BU House</span>
+      </div>
+    </div>
+    <div class="reward-card">
+      <div class="reward-emoji">👗</div>
+      <h3>Shopping Stores</h3>
+      <p>Use your BinCoins for shopping discounts at top stores in Strumica.</p>
+      <span class="reward-tag tag-fashion">250 points = 20% off selected items</span>
+      <div class="partners">
+        <span class="partner-pill">Sara Fashion</span>
+        <span class="partner-pill">DM</span>
+        <span class="partner-pill">Sport Vision</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POINTS DEMO -->
+<section class="points-section">
+  <div class="section-label" style="background:rgba(31,41,55,0.52);color:#bbf7d0;">BinCoins</div>
+  <h2 class="section-title">Every piece counts</h2>
+  <p class="section-sub">The more you recycle, the more you earn. It's not complicated — it's just better.</p>
+  <div class="points-demo">
+    <div class="point-chip">
+      <div class="pts">+10</div>
+      <div class="label">Plastic bottle</div>
+    </div>
+    <div class="point-chip">
+      <div class="pts">+20</div>
+      <div class="label">Glass bottle</div>
+    </div>
+    <div class="point-chip">
+      <div class="pts">+10</div>
+      <div class="label">Paper / cardboard</div>
+    </div>
+    <div class="point-chip">
+      <div class="pts">+5</div>
+      <div class="label">Bio</div>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section" id="map">
+  <div class="section-label">Find a BinBot</div>
+  <h2 class="section-title">We're all over Strumica</h2>
+  <p class="section-sub">12 BinBots deployed across the city — near your coffee shop, your market, your campus.</p>
+  <div id="map"></div>
+  <div class="map-legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div> BinBot location</div>
+  </div>
+</section>
+
+<!-- DOWNLOAD -->
+<section class="download" id="download">
+  <div class="section-label">Get the app</div>
+  <h2 class="section-title">Download SmartSort BinBot</h2>
+  <p class="section-sub">Available soon on iOS and Android. Be the first to go live when we launch in Strumica.</p>
+  <div class="app-btns">
+    <button class="app-btn" onclick="alert('🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!')">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="#d1d5db"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <div class="app-btn-text">
+        <small>Download on the</small>
+        <strong>App Store</strong>
+      </div>
+    </button>
+    <button class="app-btn" onclick="alert('🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!')">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="#d1d5db"><path d="M3.18 23.76c.28.15.6.17.9.06l12.84-6.6-2.76-2.82-10.98 9.36zM.44 1.98C.17 2.3 0 2.78 0 3.4v17.2c0 .62.17 1.1.44 1.42l.08.07L9.97 12v-.2L.52 1.9l-.08.08zM20.12 9.84L16.9 8.04l-3.08 3.06 3.08 3.06 3.24-1.8c.92-.52.92-1.38 0-1.9l-.02-.62zM3.18.24L16.02 6.84 13.26 9.66 2.28.3c.28-.18.62-.2.9-.06z"/></svg>
+      <div class="app-btn-text">
+        <small>Get it on</small>
+        <strong>Google Play</strong>
+      </div>
+    </button>
+  </div>
+  <div><span class="coming-badge">🔔 Launching in Strumica — Summer 2026</span></div>
+</section>
+
+<footer>
+  <p>Made with ♻ in Strumica · <span>SmartSort BinBot</span> © 2026 · Cleaner city. Better vibes.</p>
+</footer>
+
+<!-- LEAFLET MAP -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map = L.map('map', { zoomControl: true }).setView([41.440, 22.644], 14);
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  attribution: '© OpenStreetMap contributors'
+}).addTo(map);
+
+function makeIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: `<div style="width:24px;height:24px;border-radius:50%;background:${color};border:3px solid #d1d5db;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;animation:dotPulse 1.8s ease-in-out infinite;"></div>`,
+    iconSize: [24, 24], iconAnchor: [12, 12]
+  });
+}
+
+const binIcon = makeIcon('#1D9E75');
+const coffeeIcon = makeIcon('#BA7517');
+const fashionIcon = makeIcon('#534AB7');
+
+// BinBot locations at busy points in Strumica
+const bins = [
+  // Goce Delchev Square + Korzo core
+  [41.43795, 22.64332, "BinBot #1"],
+  [41.43808, 22.64348, "BinBot #2"],
+  [41.43782, 22.64318, "BinBot #3"],
+  [41.43816, 22.64308, "BinBot #4"],
+  [41.43772, 22.64354, "BinBot #5"],
+  // Old bazaar / central pedestrian flow
+  [41.43834, 22.64276, "BinBot #6"],
+  [41.43820, 22.64238, "BinBot #7"],
+  [41.43798, 22.64202, "BinBot #8"],
+  [41.43766, 22.64220, "BinBot #9"],
+  // Transit + shopping flow (bus-station side)
+  [41.43906, 22.64686, "BinBot #10"],
+  [41.43862, 22.64722, "BinBot #11"],
+  [41.43818, 22.64654, "BinBot #12"],
+];
+
+bins.forEach(([lat, lng, name]) => {
+  L.marker([lat, lng], { icon: binIcon }).addTo(map)
+    .bindPopup(`<b>♻ ${name}</b><br><small style="color:#1D9E75">SmartSort BinBot</small>`);
+});
+
+map.fitBounds(bins.map(([lat, lng]) => [lat, lng]), { padding: [24, 24] });
+
+const i18n = {
+  en: {
+    htmlLang: "en",
+    title: "SmartSort BinBot — Recycle. Earn. Repeat.",
+    navHow: "How it works",
+    navRewards: "Rewards",
+    navFind: "Find a bin",
+    navApp: "Get the app",
+    heroBadge: "♻ Main character energy for recycling · Strumica",
+    heroTitle: "Drop it.<br><span>Scan it. Stack it.</span><br>Get rewarded.",
+    heroDesc: "Turn every bottle and paper drop into points, free coffee, and shopping perks. Eco, but make it iconic.",
+    heroBtnDownload: "Download App",
+    heroBtnHow: "See how it works ↓",
+    stat1: "Bins in Strumica",
+    stat2: "More recycling",
+    stat3: "Points earned daily",
+    howLabel: "How it works",
+    howTitle: "Tap in. Drop in. Cash in.",
+    howSub: "BinBot makes recycling feel like a game: quick scan, instant points, straight-up rewards.",
+    step1Title: "Open the app",
+    step1Desc: "Download SmartSort BinBot and create your account in under 60 seconds.",
+    step2Title: "Find a BinBot",
+    step2Desc: "Locate the nearest AI-powered smart bin on the map. There's always one close.",
+    step3Title: "Toss your trash",
+    step3Desc: "Our AI scans, sorts & verifies your waste in real-time. No guessing, no wrong bins.",
+    step4Title: "Stack points",
+    step4Desc: "Earn BinCoins instantly. Redeem them at your fav spots across Strumica.",
+    rewardsLabel: "Rewards",
+    rewardsTitle: "Your trash has rizz now",
+    rewardsSub: "Stack BinCoins and unlock rewards at your favorite spots. Fast, clean, and actually worth it.",
+    coffeeTitle: "Coffee Shops",
+    coffeeDesc: "Hit 100 points and sip for free. Your next coffee is on BinBot.",
+    coffeeTag: "100 points = Free coffee",
+    fashionTitle: "Shopping Stores",
+    fashionDesc: "Reach 250 points and unlock 20% off selected items at partner stores.",
+    fashionTag: "250 points = 20% off selected items",
+    pointsTitle: "Every drop = instant glow-up",
+    pointsSub: "The more you recycle, the faster you level up your rewards.",
+    plastic: "Plastic bottle",
+    glass: "Glass bottle",
+    paper: "Paper / cardboard",
+    compost: "Bio",
+    mapLabel: "Find a BinBot",
+    mapTitle: "We're all over Strumica",
+    mapSub: "12 BinBots deployed across the city — near your coffee shop, your market, your campus.",
+    legendBin: "BinBot location",
+    dlLabel: "Get the app",
+    dlTitle: "Download SmartSort BinBot",
+    dlSub: "Coming soon to iOS and Android. Be first in line when BinBot launches in Strumica.",
+    appStoreSmall: "Download on the",
+    playSmall: "Get it on",
+    coming: "🔔 Launching in Strumica — Summer 2026",
+    footer: "Made with ♻ in Strumica · <span>SmartSort BinBot</span> © 2025 · Cleaner city. Better vibes.",
+    comingAlert: "🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!"
+  },
+  mk: {
+    htmlLang: "mk",
+    title: "SmartSort BinBot — Рециклирај. Заработи. Повтори.",
+    navHow: "Како работи",
+    navRewards: "Награди",
+    navFind: "Најди BinBot",
+    navApp: "Преземи апликација",
+    heroBadge: "♻ Main character енергија за рециклирање · Струмица",
+    heroTitle: "Фрли.<br><span>Скенирај. Собирај.</span><br>Земи награда.",
+    heroDesc: "Секое шише и хартија ти носат поени, бесплатно кафе и попусти. Еко, ама со стил.",
+    heroBtnDownload: "Преземи апликација",
+    heroBtnHow: "Види како работи ↓",
+    stat1: "BinBot канти во Струмица",
+    stat2: "Повеќе рециклирање",
+    stat3: "Поени дневно",
+    howLabel: "Како работи",
+    howTitle: "Влези. Фрли. Освои.",
+    howSub: "BinBot го прави рециклирањето како игра: брз скен, инстант поени, вистински награди.",
+    step1Title: "Отвори ја апликацијата",
+    step1Desc: "Преземи SmartSort BinBot и креирај профил за помалку од 60 секунди.",
+    step2Title: "Најди BinBot",
+    step2Desc: "Најди ја најблиската паметна канта на мапата. Секогаш има една во близина.",
+    step3Title: "Фрли го отпадот",
+    step3Desc: "Нашата ВИ го скенира, сортира и потврдува отпадот во реално време.",
+    step4Title: "Собирај поени",
+    step4Desc: "Заработувај BinCoins веднаш и искористи ги кај омилените места во Струмица.",
+    rewardsLabel: "Награди",
+    rewardsTitle: "Твојот отпад сега е vibe",
+    rewardsSub: "Собирај BinCoins и отклучувај награди кај омилените места. Брзо, чисто и исплатливо.",
+    coffeeTitle: "Кафулиња",
+    coffeeDesc: "Собери 100 поени и добиј бесплатно кафе. Следното е на BinBot.",
+    coffeeTag: "100 поени = Бесплатно кафе",
+    fashionTitle: "Продавници за шопинг",
+    fashionDesc: "Собери 250 поени и добиј 20% попуст на избрани производи кај партнери.",
+    fashionTag: "250 поени = 20% попуст на избрани производи",
+    pointsTitle: "Секое фрлање = instant glow-up",
+    pointsSub: "Колку повеќе рециклираш, толку побрзо отклучуваш топ награди.",
+    plastic: "Пластично шише",
+    glass: "Стаклено шише",
+    paper: "Хартија / картон",
+    compost: "Био",
+    mapLabel: "Најди BinBot",
+    mapTitle: "Насекаде низ Струмица",
+    mapSub: "12 BinBot локации низ градот — близу кафе, маркет и кампус.",
+    legendBin: "BinBot локација",
+    dlLabel: "Преземи апликација",
+    dlTitle: "Преземи SmartSort BinBot",
+    dlSub: "Наскоро на iOS и Android. Биди прв кога BinBot стартува во Струмица.",
+    appStoreSmall: "Преземи од",
+    playSmall: "Достапно на",
+    coming: "🔔 Лансирање во Струмица — Лето 2026",
+    footer: "Направено со ♻ во Струмица · <span>SmartSort BinBot</span> © 2025 · Почист град. Подобар живот.",
+    comingAlert: "🚀 Наскоро! BinBot многу брзо стартува во Струмица — следи нѐ!"
+  }
+};
+
+const t = {
+  navHow: document.querySelector('nav ul li:nth-child(1) a'),
+  navRewards: document.querySelector('nav ul li:nth-child(2) a'),
+  navFind: document.querySelector('nav ul li:nth-child(3) a'),
+  navApp: document.querySelector('nav ul li:nth-child(4) a'),
+  heroBadge: document.querySelector('.hero-badge'),
+  heroTitle: document.querySelector('.hero h1'),
+  heroDesc: document.querySelector('.hero p'),
+  heroBtnDownload: document.querySelector('.btn-primary'),
+  heroBtnHow: document.querySelector('.btn-secondary'),
+  stat1: document.querySelector('.hero-stats .hero-stat:nth-child(1) span'),
+  stat2: document.querySelector('.hero-stats .hero-stat:nth-child(2) span'),
+  stat3: document.querySelector('.hero-stats .hero-stat:nth-child(3) span'),
+  howLabel: document.querySelector('#how .section-label'),
+  howTitle: document.querySelector('#how .section-title'),
+  howSub: document.querySelector('#how .section-sub'),
+  step1Title: document.querySelector('.steps .step:nth-child(1) h3'),
+  step1Desc: document.querySelector('.steps .step:nth-child(1) p'),
+  step2Title: document.querySelector('.steps .step:nth-child(2) h3'),
+  step2Desc: document.querySelector('.steps .step:nth-child(2) p'),
+  step3Title: document.querySelector('.steps .step:nth-child(3) h3'),
+  step3Desc: document.querySelector('.steps .step:nth-child(3) p'),
+  step4Title: document.querySelector('.steps .step:nth-child(4) h3'),
+  step4Desc: document.querySelector('.steps .step:nth-child(4) p'),
+  rewardsLabel: document.querySelector('#rewards .section-label'),
+  rewardsTitle: document.querySelector('#rewards .section-title'),
+  rewardsSub: document.querySelector('#rewards .section-sub'),
+  coffeeTitle: document.querySelector('.rewards-grid .reward-card:nth-child(1) h3'),
+  coffeeDesc: document.querySelector('.rewards-grid .reward-card:nth-child(1) p'),
+  coffeeTag: document.querySelector('.rewards-grid .reward-card:nth-child(1) .reward-tag'),
+  fashionTitle: document.querySelector('.rewards-grid .reward-card:nth-child(2) h3'),
+  fashionDesc: document.querySelector('.rewards-grid .reward-card:nth-child(2) p'),
+  fashionTag: document.querySelector('.rewards-grid .reward-card:nth-child(2) .reward-tag'),
+  pointsTitle: document.querySelector('.points-section .section-title'),
+  pointsSub: document.querySelector('.points-section .section-sub'),
+  plastic: document.querySelector('.points-demo .point-chip:nth-child(1) .label'),
+  glass: document.querySelector('.points-demo .point-chip:nth-child(2) .label'),
+  paper: document.querySelector('.points-demo .point-chip:nth-child(3) .label'),
+  compost: document.querySelector('.points-demo .point-chip:nth-child(4) .label'),
+  mapLabel: document.querySelector('.map-section .section-label'),
+  mapTitle: document.querySelector('.map-section .section-title'),
+  mapSub: document.querySelector('.map-section .section-sub'),
+  legendBin: document.querySelector('.map-legend .legend-item:nth-child(1)'),
+  dlLabel: document.querySelector('#download .section-label'),
+  dlTitle: document.querySelector('#download .section-title'),
+  dlSub: document.querySelector('#download .section-sub'),
+  appStoreSmall: document.querySelector('.app-btn:nth-child(1) small'),
+  playSmall: document.querySelector('.app-btn:nth-child(2) small'),
+  coming: document.querySelector('.coming-badge'),
+  footer: document.querySelector('footer p'),
+};
+
+function setLanguage(lang) {
+  const dict = i18n[lang];
+  document.documentElement.lang = dict.htmlLang;
+  document.title = dict.title;
+  Object.keys(t).forEach((key) => {
+    if (!t[key] || !dict[key]) return;
+    if (key === "heroTitle" || key === "footer") {
+      t[key].innerHTML = dict[key];
+    } else if (key.startsWith("legend")) {
+      const dot = t[key].querySelector('.legend-dot');
+      t[key].innerHTML = '';
+      if (dot) t[key].appendChild(dot);
+      t[key].append(' ' + dict[key]);
+    } else {
+      t[key].textContent = dict[key];
+    }
+  });
+
+  document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+  document.getElementById('lang-mk').classList.toggle('active', lang === 'mk');
+  localStorage.setItem('binbot-lang', lang);
+}
+
+document.getElementById('lang-en').addEventListener('click', () => setLanguage('en'));
+document.getElementById('lang-mk').addEventListener('click', () => setLanguage('mk'));
+
+setLanguage(localStorage.getItem('binbot-lang') || 'en');
+
+const revealTargets = document.querySelectorAll('section, .step, .reward-card, .point-chip');
+revealTargets.forEach((el) => el.classList.add('reveal'));
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+revealTargets.forEach((el) => revealObserver.observe(el));
+</script>
+</body>
+</html>
