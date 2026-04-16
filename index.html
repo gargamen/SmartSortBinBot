@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SmartSort BinBot — Trash that pays you back</title>
+<title>SortSaveBinBot — Trash that pays you back</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -38,8 +38,8 @@
     padding: 0 5vw; height: 64px;
   }
   .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; color: #bbf7d0; }
-  .logo-icon { width: 36px; height: 36px; background: var(--green); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-  .logo-icon svg { width: 22px; height: 22px; }
+  .logo-icon { width: 36px; height: 36px; background: transparent; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+  .logo-icon img { width: 100%; height: 100%; object-fit: contain; display: block; }
   nav ul { list-style: none; display: flex; gap: 2rem; }
   nav ul a { text-decoration: none; color: #9ca3af; font-size: 0.9rem; font-weight: 500; transition: color .2s; }
   nav ul a:hover { color: var(--green); }
@@ -142,6 +142,17 @@
   .legend-dot { width: 12px; height: 12px; border-radius: 50%; animation: dotPulse 1.8s ease-in-out infinite; }
   @keyframes dotPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.25); opacity: .7; } }
 
+  /* PREMIUM */
+  .premium { background: linear-gradient(135deg, #0b2a1a 0%, #111827 40%, #14532d 100%); text-align: center; }
+  .premium .section-label { background: rgba(34,197,94,.18); border: 1px solid rgba(34,197,94,.35); }
+  .premium-price {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #e5e7eb;
+    margin: 0.75rem 0 0.25rem;
+  }
+  .premium-sub { color: rgba(229,231,235,0.86); max-width: 720px; margin: 0 auto; }
+
   /* DOWNLOAD */
   .download { background: #111827; text-align: center; }
   .download .section-title { margin-bottom: 1rem; }
@@ -193,15 +204,17 @@
 <nav>
   <div class="logo">
     <div class="logo-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
-      </svg>
+      <img
+        src="C:\Users\Garvanlievi\Desktop\binbot\assets\logo.png"
+        alt="SortSave logo"
+      />
     </div>
-    SmartSort BinBot
+    SortSaveBinBot
   </div>
   <ul>
     <li><a href="#how">How it works</a></li>
     <li><a href="#rewards">Rewards</a></li>
+    <li><a href="#premium">Premium</a></li>
     <li><a href="#map">Find a bin</a></li>
     <li><a href="#download" class="nav-cta">Get the app</a></li>
   </ul>
@@ -244,28 +257,28 @@
 <section class="how" id="how">
   <div class="section-label">How it works</div>
   <h2 class="section-title">Throw. Scan. Slay.</h2>
-  <p class="section-sub">BinBot makes recycling stupid easy — and actually rewarding. No lectures, just points.</p>
+  <p class="section-sub">SortSaveBinBot makes recycling stupid easy — and actually rewarding. No lectures, just points.</p>
   <div class="steps">
     <div class="step">
-      <div class="step-icon">📱</div>
+      <div class="step-icon"></div>
       <div class="step-num">1</div>
       <h3>Open the app</h3>
-      <p>Download SmartSort BinBot and create your account in under 60 seconds.</p>
+      <p>Download SortSaveBinBot and create your account in under 60 seconds.</p>
     </div>
     <div class="step">
-      <div class="step-icon">🗑️</div>
+      <div class="step-icon"></div>
       <div class="step-num">2</div>
-      <h3>Find a BinBot</h3>
+      <h3>Find a SortSaveBinBot</h3>
       <p>Locate the nearest AI-powered smart bin on the map. There's always one close.</p>
     </div>
     <div class="step">
-      <div class="step-icon">🤖</div>
+      <div class="step-icon"></div>
       <div class="step-num">3</div>
       <h3>Toss your trash</h3>
       <p>Our AI scans, sorts & verifies your waste in real-time. No guessing, no wrong bins.</p>
     </div>
     <div class="step">
-      <div class="step-icon">✨</div>
+      <div class="step-icon"></div>
       <div class="step-num">4</div>
       <h3>Stack points</h3>
       <p>Earn BinCoins instantly. Redeem them at your fav spots across Strumica.</p>
@@ -331,29 +344,37 @@
 
 <!-- MAP -->
 <section class="map-section" id="map">
-  <div class="section-label">Find a BinBot</div>
+  <div class="section-label">Find a SortSaveBinBot</div>
   <h2 class="section-title">We're all over Strumica</h2>
-  <p class="section-sub">12 BinBots deployed across the city — near your coffee shop, your market, your campus.</p>
+  <p class="section-sub">12 SortSaveBinBots deployed across the city — near your coffee shop, your market, your campus.</p>
   <div id="map"></div>
   <div class="map-legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div> BinBot location</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#1D9E75"></div> SortSaveBinBot location</div>
   </div>
+</section>
+
+<!-- PREMIUM -->
+<section class="premium" id="premium">
+  <div class="section-label">Premium</div>
+  <h2 class="section-title">No ads. Better rewards.</h2>
+  <p class="premium-price">$1.99 / month</p>
+  <p class="section-sub premium-sub">Includes no ads and better rewards at Concept, Arty, Sfera, Shalom, and Sirius Spa &amp; Wellness...</p>
 </section>
 
 <!-- DOWNLOAD -->
 <section class="download" id="download">
   <div class="section-label">Get the app</div>
-  <h2 class="section-title">Download SmartSort BinBot</h2>
+  <h2 class="section-title">Download SortSaveBinBot</h2>
   <p class="section-sub">Available soon on iOS and Android. Be the first to go live when we launch in Strumica.</p>
   <div class="app-btns">
-    <button class="app-btn" onclick="alert('🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!')">
+    <button class="app-btn" onclick="alert('🚀 Coming soon! SortSaveBinBot is launching in Strumica very soon — stay tuned!')">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="#d1d5db"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
       <div class="app-btn-text">
         <small>Download on the</small>
         <strong>App Store</strong>
       </div>
     </button>
-    <button class="app-btn" onclick="alert('🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!')">
+    <button class="app-btn" onclick="alert('🚀 Coming soon! SortSaveBinBot is launching in Strumica very soon — stay tuned!')">
       <svg width="28" height="28" viewBox="0 0 24 24" fill="#d1d5db"><path d="M3.18 23.76c.28.15.6.17.9.06l12.84-6.6-2.76-2.82-10.98 9.36zM.44 1.98C.17 2.3 0 2.78 0 3.4v17.2c0 .62.17 1.1.44 1.42l.08.07L9.97 12v-.2L.52 1.9l-.08.08zM20.12 9.84L16.9 8.04l-3.08 3.06 3.08 3.06 3.24-1.8c.92-.52.92-1.38 0-1.9l-.02-.62zM3.18.24L16.02 6.84 13.26 9.66 2.28.3c.28-.18.62-.2.9-.06z"/></svg>
       <div class="app-btn-text">
         <small>Get it on</small>
@@ -365,7 +386,7 @@
 </section>
 
 <footer>
-  <p>Made with ♻ in Strumica · <span>SmartSort BinBot</span> © 2026 · Cleaner city. Better vibes.</p>
+  <p>Made with ♻ in Strumica · <span>SortSaveBinBot</span> © 2026 · Cleaner city. Better vibes.</p>
 </footer>
 
 <!-- LEAFLET MAP -->
@@ -390,28 +411,28 @@ const binIcon = makeIcon('#1D9E75');
 const coffeeIcon = makeIcon('#BA7517');
 const fashionIcon = makeIcon('#534AB7');
 
-// BinBot locations at busy points in Strumica
+// SortSaveBinBot locations at busy points in Strumica
 const bins = [
   // Goce Delchev Square + Korzo core
-  [41.43795, 22.64332, "BinBot #1"],
-  [41.43808, 22.64348, "BinBot #2"],
-  [41.43782, 22.64318, "BinBot #3"],
-  [41.43816, 22.64308, "BinBot #4"],
-  [41.43772, 22.64354, "BinBot #5"],
+  [41.43795, 22.64332, "SortSaveBinBot #1"],
+  [41.43808, 22.64348, "SortSaveBinBot #2"],
+  [41.43782, 22.64318, "SortSaveBinBot #3"],
+  [41.43816, 22.64308, "SortSaveBinBot #4"],
+  [41.43772, 22.64354, "SortSaveBinBot #5"],
   // Old bazaar / central pedestrian flow
-  [41.43834, 22.64276, "BinBot #6"],
-  [41.43820, 22.64238, "BinBot #7"],
-  [41.43798, 22.64202, "BinBot #8"],
-  [41.43766, 22.64220, "BinBot #9"],
+  [41.43834, 22.64276, "SortSaveBinBot #6"],
+  [41.43820, 22.64238, "SortSaveBinBot #7"],
+  [41.43798, 22.64202, "SortSaveBinBot #8"],
+  [41.43766, 22.64220, "SortSaveBinBot #9"],
   // Transit + shopping flow (bus-station side)
-  [41.43906, 22.64686, "BinBot #10"],
-  [41.43862, 22.64722, "BinBot #11"],
-  [41.43818, 22.64654, "BinBot #12"],
+  [41.43906, 22.64686, "SortSaveBinBot #10"],
+  [41.43862, 22.64722, "SortSaveBinBot #11"],
+  [41.43818, 22.64654, "SortSaveBinBot #12"],
 ];
 
 bins.forEach(([lat, lng, name]) => {
   L.marker([lat, lng], { icon: binIcon }).addTo(map)
-    .bindPopup(`<b>♻ ${name}</b><br><small style="color:#1D9E75">SmartSort BinBot</small>`);
+    .bindPopup(`<b>♻ ${name}</b><br><small style="color:#1D9E75">SortSaveBinBot</small>`);
 });
 
 map.fitBounds(bins.map(([lat, lng]) => [lat, lng]), { padding: [24, 24] });
@@ -419,9 +440,10 @@ map.fitBounds(bins.map(([lat, lng]) => [lat, lng]), { padding: [24, 24] });
 const i18n = {
   en: {
     htmlLang: "en",
-    title: "SmartSort BinBot — Recycle. Earn. Repeat.",
+    title: "SortSaveBinBot — Recycle. Earn. Repeat.",
     navHow: "How it works",
     navRewards: "Rewards",
+    navPremium: "Premium",
     navFind: "Find a bin",
     navApp: "Get the app",
     heroBadge: "♻ Main character energy for recycling · Strumica",
@@ -434,10 +456,10 @@ const i18n = {
     stat3: "Points earned daily",
     howLabel: "How it works",
     howTitle: "Tap in. Drop in. Cash in.",
-    howSub: "BinBot makes recycling feel like a game: quick scan, instant points, straight-up rewards.",
+    howSub: "SortSaveBinBot makes recycling feel like a game: quick scan, instant points, straight-up rewards.",
     step1Title: "Open the app",
-    step1Desc: "Download SmartSort BinBot and create your account in under 60 seconds.",
-    step2Title: "Find a BinBot",
+    step1Desc: "Download SortSaveBinBot and create your account in under 60 seconds.",
+    step2Title: "Find a SortSaveBinBot",
     step2Desc: "Locate the nearest AI-powered smart bin on the map. There's always one close.",
     step3Title: "Toss your trash",
     step3Desc: "Our AI scans, sorts & verifies your waste in real-time. No guessing, no wrong bins.",
@@ -447,7 +469,7 @@ const i18n = {
     rewardsTitle: "Your trash is cool now",
     rewardsSub: "Stack BinCoins and unlock rewards at your favorite spots. Fast, clean, and actually worth it.",
     coffeeTitle: "Coffee Shops",
-    coffeeDesc: "Hit 100 points and sip for free. Your next coffee is on BinBot.",
+    coffeeDesc: "Hit 100 points and sip for free. Your next coffee is on SortSaveBinBot.",
     coffeeTag: "100 points = Free coffee",
     fashionTitle: "Shopping Stores",
     fashionDesc: "Reach 250 points and unlock 20% off selected items at partner stores.",
@@ -458,40 +480,45 @@ const i18n = {
     glass: "Glass bottle",
     paper: "Paper / cardboard",
     compost: "Bio",
-    mapLabel: "Find a BinBot",
+    mapLabel: "Find a SortSaveBinBot",
     mapTitle: "We're all over Strumica",
-    mapSub: "12 BinBots deployed across the city — near your coffee shop, your market, your campus.",
-    legendBin: "BinBot location",
+    mapSub: "12 SortSaveBinBots deployed across the city — near your coffee shop, your market, your campus.",
+    legendBin: "SortSaveBinBot location",
     dlLabel: "Get the app",
-    dlTitle: "Download SmartSort BinBot",
-    dlSub: "Coming soon to iOS and Android. Be first in line when BinBot launches in Strumica.",
+    dlTitle: "Download SortSaveBinBot",
+    dlSub: "Coming soon to iOS and Android. Be first in line when SortSaveBinBot launches in Strumica.",
     appStoreSmall: "Download on the",
     playSmall: "Get it on",
     coming: "🔔 Launching in Strumica — Summer 2026",
-    footer: "Made with ♻ in Strumica · <span>SmartSort BinBot</span> © 2025 · Cleaner city. Better vibes.",
-    comingAlert: "🚀 Coming soon! BinBot is launching in Strumica very soon — stay tuned!"
+    premiumLabel: "Premium",
+    premiumTitle: "No ads. Better rewards.",
+    premiumPrice: "$1.99 / month",
+    premiumSub: "Includes no ads and better rewards at Concept, Arty, Sfera, Shalom, and Sirius Spa & Wellness...",
+    footer: "Made with ♻ in Strumica · <span>SortSaveBinBot</span> © 2025 · Cleaner city. Better vibes.",
+    comingAlert: "🚀 Coming soon! SortSaveBinBot is launching in Strumica very soon — stay tuned!"
   },
   mk: {
     htmlLang: "mk",
-    title: "SmartSort BinBot — Рециклирај. Заработи. Повтори.",
+    title: "SortSaveBinBot — Рециклирај. Заработи. Повтори.",
     navHow: "Како работи",
     navRewards: "Награди",
-    navFind: "Најди BinBot",
+    navPremium: "Премиум",
+    navFind: "Најди SortSaveBinBot",
     navApp: "Преземи апликација",
     heroBadge: "♻ Main character енергија за рециклирање · Струмица",
     heroTitle: "Фрли.<br><span>Скенирај. Собирај.</span><br>Земи награда.",
     heroDesc: "Секое шише и хартија ти носат поени, бесплатно кафе и попусти. Еко, ама со стил.",
     heroBtnDownload: "Преземи апликација",
     heroBtnHow: "Види како работи ↓",
-    stat1: "BinBot канти во Струмица",
+    stat1: "SortSaveBinBot канти во Струмица",
     stat2: "Повеќе рециклирање",
     stat3: "Поени дневно",
     howLabel: "Како работи",
     howTitle: "Влези. Фрли. Освои.",
-    howSub: "BinBot го прави рециклирањето како игра: брз скен, инстант поени, вистински награди.",
+    howSub: "SortSaveBinBot го прави рециклирањето како игра: брз скен, инстант поени, вистински награди.",
     step1Title: "Отвори ја апликацијата",
-    step1Desc: "Преземи SmartSort BinBot и креирај профил за помалку од 60 секунди.",
-    step2Title: "Најди BinBot",
+    step1Desc: "Преземи SortSaveBinBot и креирај профил за помалку од 60 секунди.",
+    step2Title: "Најди SortSaveBinBot",
     step2Desc: "Најди ја најблиската паметна канта на мапата. Секогаш има една во близина.",
     step3Title: "Фрли го отпадот",
     step3Desc: "Нашата ВИ го скенира, сортира и потврдува отпадот во реално време.",
@@ -501,7 +528,7 @@ const i18n = {
     rewardsTitle: "Твојот отпад сега е vibe",
     rewardsSub: "Собирај BinCoins и отклучувај награди кај омилените места. Брзо, чисто и исплатливо.",
     coffeeTitle: "Кафулиња",
-    coffeeDesc: "Собери 100 поени и добиј бесплатно кафе. Следното е на BinBot.",
+    coffeeDesc: "Собери 100 поени и добиј бесплатно кафе. Следното е на SortSaveBinBot.",
     coffeeTag: "100 поени = Бесплатно кафе",
     fashionTitle: "Продавници за шопинг",
     fashionDesc: "Собери 250 поени и добиј 20% попуст на избрани производи кај партнери.",
@@ -512,26 +539,31 @@ const i18n = {
     glass: "Стаклено шише",
     paper: "Хартија / картон",
     compost: "Био",
-    mapLabel: "Најди BinBot",
+    mapLabel: "Најди SortSaveBinBot",
     mapTitle: "Насекаде низ Струмица",
-    mapSub: "12 BinBot локации низ градот — близу кафе, маркет и кампус.",
-    legendBin: "BinBot локација",
+    mapSub: "12 SortSaveBinBot локации низ градот — близу кафе, маркет и кампус.",
+    legendBin: "SortSaveBinBot локација",
     dlLabel: "Преземи апликација",
-    dlTitle: "Преземи SmartSort BinBot",
-    dlSub: "Наскоро на iOS и Android. Биди прв кога BinBot стартува во Струмица.",
+    dlTitle: "Преземи SortSaveBinBot",
+    dlSub: "Наскоро на iOS и Android. Биди прв кога SortSaveBinBot стартува во Струмица.",
     appStoreSmall: "Преземи од",
     playSmall: "Достапно на",
     coming: "🔔 Лансирање во Струмица — Лето 2026",
-    footer: "Направено со ♻ во Струмица · <span>SmartSort BinBot</span> © 2025 · Почист град. Подобар живот.",
-    comingAlert: "🚀 Наскоро! BinBot многу брзо стартува во Струмица — следи нѐ!"
+    premiumLabel: "Премиум",
+    premiumTitle: "Без реклами. Подобри награди.",
+    premiumPrice: "$1.99 / месец",
+    premiumSub: "Вклучува без реклами и подобри награди кај Concept, Arty, Sfera, Shalom, и Sirius Spa & Wellness...",
+    footer: "Направено со ♻ во Струмица · <span>SortSaveBinBot</span> © 2025 · Почист град. Подобар живот.",
+    comingAlert: "🚀 Наскоро! SortSaveBinBot многу брзо стартува во Струмица — следи нѐ!"
   }
 };
 
 const t = {
   navHow: document.querySelector('nav ul li:nth-child(1) a'),
   navRewards: document.querySelector('nav ul li:nth-child(2) a'),
-  navFind: document.querySelector('nav ul li:nth-child(3) a'),
-  navApp: document.querySelector('nav ul li:nth-child(4) a'),
+  navPremium: document.querySelector('nav ul li:nth-child(3) a'),
+  navFind: document.querySelector('nav ul li:nth-child(4) a'),
+  navApp: document.querySelector('nav ul li:nth-child(5) a'),
   heroBadge: document.querySelector('.hero-badge'),
   heroTitle: document.querySelector('.hero h1'),
   heroDesc: document.querySelector('.hero p'),
@@ -570,6 +602,10 @@ const t = {
   mapTitle: document.querySelector('.map-section .section-title'),
   mapSub: document.querySelector('.map-section .section-sub'),
   legendBin: document.querySelector('.map-legend .legend-item:nth-child(1)'),
+  premiumLabel: document.querySelector('#premium .section-label'),
+  premiumTitle: document.querySelector('#premium .section-title'),
+  premiumPrice: document.querySelector('#premium .premium-price'),
+  premiumSub: document.querySelector('#premium .premium-sub'),
   dlLabel: document.querySelector('#download .section-label'),
   dlTitle: document.querySelector('#download .section-title'),
   dlSub: document.querySelector('#download .section-sub'),
